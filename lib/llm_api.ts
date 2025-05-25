@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { generateText, streamText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai'
+import { generateText, streamText } from 'ai'
 
 function lessonPlanningSystemPrompt(request: string, files: { name: string; summary: string }[]) {
   return `

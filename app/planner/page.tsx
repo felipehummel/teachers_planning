@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '@/lib/internal_api';
-import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
+import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '@/lib/internal_api'
+import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 function FileUpload({
   handleFileUpload,
 }: {
-  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
+  handleFileUpload: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>
 }) {
   return (
     <div className="flex items-center justify-center w-full">
@@ -29,7 +29,8 @@ function FileUpload({
             />
           </svg>
           <p className="mb-2 text-sm text-foreground/70">
-            <span className="font-semibold">Clique para fazer upload dos seus materiais</span> ou arraste e solte
+            <span className="font-semibold">Clique para fazer upload dos seus materiais</span> ou
+            arraste e solte
           </p>
           <p className="text-xs text-foreground/60">
             PDF, DOCX, PPTX (múltiplos arquivos permitidos)
@@ -44,10 +45,18 @@ function FileUpload({
         />
       </label>
     </div>
-  );
+  )
 }
 
-function UploadedFiles({ uploadedFiles, setSelectedFile, removeFile }: { uploadedFiles: UploadedFile[], setSelectedFile: (file: UploadedFile) => void, removeFile: (fileName: string) => void }) {
+function UploadedFiles({
+  uploadedFiles,
+  setSelectedFile,
+  removeFile,
+}: {
+  uploadedFiles: UploadedFile[]
+  setSelectedFile: (file: UploadedFile) => void
+  removeFile: (fileName: string) => void
+}) {
   return (
     uploadedFiles.length > 0 && (
       <div className="mt-4 space-y-2">
@@ -70,9 +79,7 @@ function UploadedFiles({ uploadedFiles, setSelectedFile, removeFile }: { uploade
                   d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-sm text-foreground/70 truncate max-w-xs">
-                {file.name}
-              </span>
+              <span className="text-sm text-foreground/70 truncate max-w-xs">{file.name}</span>
             </div>
             <div className="flex items-center space-x-2">
               {file.isLoading ? (
@@ -102,12 +109,7 @@ function UploadedFiles({ uploadedFiles, setSelectedFile, removeFile }: { uploade
                     className="p-1 text-primary hover:text-primary/80 focus:outline-none font-bold"
                     title="Ver resumo"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -127,12 +129,7 @@ function UploadedFiles({ uploadedFiles, setSelectedFile, removeFile }: { uploade
                     className="p-1 text-red-500 hover:text-red-600 focus:outline-none font-bold"
                     title="Remover arquivo"
                   >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -151,12 +148,12 @@ function UploadedFiles({ uploadedFiles, setSelectedFile, removeFile }: { uploade
   )
 }
 export default function PlannerPage() {
-  const [input, setInput] = useState('');
-  const [result, setResult] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
-  const [weeks, setWeeks] = useState(1);
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null)
+  const [weeks, setWeeks] = useState(1)
   const [selectedDays, setSelectedDays] = useState<boolean[]>([
     false,
     true,
@@ -165,45 +162,45 @@ export default function PlannerPage() {
     true,
     true,
     false,
-  ]);
+  ])
 
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const userMessage = input.trim();
+    const userMessage = input.trim()
 
-    if (!userMessage) return;
+    if (!userMessage) return
 
-    setInput('');
-    setIsLoading(true);
+    setInput('')
+    setIsLoading(true)
 
-    const onComplete = () => setIsLoading(false);
-    const onUpdate = (resultUntilNow: string) => setResult(resultUntilNow);
+    const onComplete = () => setIsLoading(false)
+    const onUpdate = (resultUntilNow: string) => setResult(resultUntilNow)
 
-    const weekDaysCount = selectedDays.filter(day => day).length;
+    const weekDaysCount = selectedDays.filter(day => day).length
 
-    fetchStreamedPlan(uploadedFiles, userMessage, weekDaysCount, weeks, onComplete, onUpdate);
-  };
+    fetchStreamedPlan(uploadedFiles, userMessage, weekDaysCount, weeks, onComplete, onUpdate)
+  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+    const files = e.target.files
+    if (!files) return
 
-    const toUploadFiles = Array.from(files);
+    const toUploadFiles = Array.from(files)
 
     const newFiles = toUploadFiles.map(file => ({
       name: file.name,
       isLoading: true,
       hasError: false,
-    }));
+    }))
 
-    setUploadedFiles(prev => [...prev, ...newFiles]);
+    setUploadedFiles(prev => [...prev, ...newFiles])
 
     await Promise.all(
       toUploadFiles.map(async file => {
-        const { summary, hasError } = await summarizeFile(file);
+        const { summary, hasError } = await summarizeFile(file)
         if (hasError) {
           setUploadedFiles(prev =>
             prev.map(f =>
@@ -211,21 +208,21 @@ export default function PlannerPage() {
                 ? { ...f, summary: 'Erro ao processar o arquivo', isLoading: false, hasError: true }
                 : f
             )
-          );
+          )
         } else {
           setUploadedFiles(prev =>
             prev.map(f =>
               f.name === file.name ? { ...f, summary, isLoading: false, hasError: false } : f
             )
-          );
+          )
         }
       })
-    );
-  };
+    )
+  }
 
   const removeFile = (fileName: string) => {
-    setUploadedFiles(prev => prev.filter(file => file.name !== fileName));
-  };
+    setUploadedFiles(prev => prev.filter(file => file.name !== fileName))
+  }
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -241,7 +238,11 @@ export default function PlannerPage() {
           </h3>
           <FileUpload handleFileUpload={handleFileUpload} />
 
-          <UploadedFiles uploadedFiles={uploadedFiles} setSelectedFile={setSelectedFile} removeFile={removeFile} />
+          <UploadedFiles
+            uploadedFiles={uploadedFiles}
+            setSelectedFile={setSelectedFile}
+            removeFile={removeFile}
+          />
         </div>
 
         <form onSubmit={handleSubmit} className="mb-8">
@@ -274,9 +275,9 @@ export default function PlannerPage() {
                     key={dia}
                     type="button"
                     onClick={() => {
-                      const newDays = [...selectedDays];
-                      newDays[index] = !newDays[index];
-                      setSelectedDays(newDays);
+                      const newDays = [...selectedDays]
+                      newDays[index] = !newDays[index]
+                      setSelectedDays(newDays)
                     }}
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-sm text-sm font-bold ${
                       selectedDays[index]
@@ -290,7 +291,7 @@ export default function PlannerPage() {
               </div>
             </div>
           </div>
-          <div className='flex flex-col space-y-4'>
+          <div className="flex flex-col space-y-4">
             <h3 className="block text-lg font-bold text-foreground">
               Como você quer seu plano de aula?
             </h3>
@@ -299,8 +300,8 @@ export default function PlannerPage() {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => {
                 if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-                  e.preventDefault();
-                  handleSubmit(e as any);
+                  e.preventDefault()
+                  handleSubmit(e as any)
                 }
               }}
               placeholder="Ex: Plano de aula sobre fotossíntese para 6º ano..."
@@ -332,8 +333,8 @@ export default function PlannerPage() {
             <ReactMarkdown
               components={{
                 a: ({ node, ...props }) => {
-                  const childrenText = props.children?.toString() || '';
-                  const file = uploadedFiles.find(f => f.name === childrenText);
+                  const childrenText = props.children?.toString() || ''
+                  const file = uploadedFiles.find(f => f.name === childrenText)
 
                   if (file) {
                     return (
@@ -343,9 +344,9 @@ export default function PlannerPage() {
                       >
                         {props.children}
                       </button>
-                    );
+                    )
                   }
-                  return <a {...props} />;
+                  return <a {...props} />
                 },
               }}
             >
@@ -381,5 +382,5 @@ export default function PlannerPage() {
         )}
       </div>
     </div>
-  );
+  )
 }
