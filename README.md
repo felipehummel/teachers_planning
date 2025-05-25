@@ -2,7 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, configure the OPENAI_API_KEY in your env or in your .env file. No database is needed
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -16,21 +18,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Notes on implementation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### LLM API interaction
 
-## Learn More
+- Chose the OpenAI API because I've already use it in the past and already had keys
+- Chose to use Vercel's AI library to simplify streaming/generating but it actually didn't matter much
+- All LLM calls are isolated in the `llm_api.ts` file, including prompts
+- The previous decisions would help in case we want to change or use different LLMs
+- We have two calls/use cases: (1) summarize this text coming from a document (pdf, slides, docx); (2) Given teacher's instructions, documents summaries and schedule information, create the lessons/sessions plan accordinly.
+- The streaming of sessions/lessons is mostly abstracted away in the backend (`llm_api.ts` and `api/planner/route.ts`). In the frontend, we hide the details of how to continously parse the stream in `internal_api.ts`. Also, there's a missing error handling there: when generation/streaming fails we just put a generic error message in english instead of showing a proper error component.
 
-To learn more about Next.js, take a look at the following resources:
+### Material upload, schedule and planning
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- As OpenAI doesn't easily accept all expected file formats, I decided to manually parse the pdf, docx and pptx files. Libraries for that were easily found.
+- All file parsing is isolated in the `file_parsing` folder with a file for each file type
+- As soon as the file is uploaded we send the document to OpenAI for summarization and send the summarized content back to the frontend. That way we never need to store file information in a database.
+- I decided to put a little :eye: icon in the uploaded file so the user can see the summarized content of the file. If I were to implement the file preview it would also be there.
+- The schedule is chosen by the teacher through two components: a weeks slider (from 1 to 24 weeks) and a list of week days to choose from. I'm not entirely sure on the slider UI, but it felt better than a simple number textbox or a combobox with a huge list (1-24).
+- I handcrafted the prompts for the planning part by trial and error. Maybe with more guidance and feedback from teachers it could become much better.
