@@ -1,13 +1,14 @@
 'use client'
 
 import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '../../lib/internal_api'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { FileUpload } from './components/FileUpload'
 import { UploadedFiles } from './components/UploadedFiles'
 import { Schedule } from './components/Schedule'
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { CloseIcon } from './components/Icons'
+import { ExportButton } from './components/ExportButton'
 
 export default function PlannerPage() {
   const [input, setInput] = useState('')
@@ -25,6 +26,7 @@ export default function PlannerPage() {
     true,
     false,
   ])
+  const resultRef = useRef<HTMLDivElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -93,7 +95,7 @@ export default function PlannerPage() {
   }
 
   const isUploadingFiles = uploadedFiles.some(file => file.isLoading)
-  const isUpdatingPlan = result !== ''
+  const isPlanUpdate = result !== ''
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -125,7 +127,7 @@ export default function PlannerPage() {
           />
           <div className="flex flex-col space-y-4">
             <h3 className="block text-lg font-bold text-foreground">
-              {isUpdatingPlan
+              {isPlanUpdate
                 ? 'Como você quer atualizar seu plano de aula?'
                 : 'Como você quer seu plano de aula?'}
             </h3>
@@ -139,7 +141,7 @@ export default function PlannerPage() {
                 }
               }}
               placeholder={
-                isUpdatingPlan
+                isPlanUpdate
                   ? 'Ex: Mova as aulas sobre fotossíntese para o final do plano...'
                   : 'Ex: Plano de aula sobre fotossíntese para 6º ano...'
               }
@@ -155,7 +157,7 @@ export default function PlannerPage() {
                 ? 'Processando arquivos...'
                 : isLoading
                 ? 'Gerando...'
-                : isUpdatingPlan
+                : isPlanUpdate
                 ? 'Atualizar Plano'
                 : 'Criar Plano'}
             </button>
@@ -169,30 +171,35 @@ export default function PlannerPage() {
         )}
 
         {result && (
-          <div className="bg-white rounded-lg p-6 shadow-lg prose max-w-none">
-            <ReactMarkdown
-              components={{
-                a: ({ node, ...props }) => {
-                  const childrenText = props.children?.toString() || ''
-                  const file = uploadedFiles.find(f => f.name === childrenText)
+          <>
+            <div className="flex justify-end mb-4">
+              <ExportButton contentRef={resultRef} disabled={isLoading} />
+            </div>
+            <div ref={resultRef} className="bg-white rounded-lg p-6 shadow-lg prose max-w-none">
+              <ReactMarkdown
+                components={{
+                  a: ({ node, ...props }) => {
+                    const childrenText = props.children?.toString() || ''
+                    const file = uploadedFiles.find(f => f.name === childrenText)
 
-                  if (file) {
-                    return (
-                      <button
-                        onClick={() => setSelectedFile(file)}
-                        className="text-primary hover:text-primary/80 underline font-bold"
-                      >
-                        {props.children}
-                      </button>
-                    )
-                  }
-                  return <a {...props} />
-                },
-              }}
-            >
-              {result}
-            </ReactMarkdown>
-          </div>
+                    if (file) {
+                      return (
+                        <button
+                          onClick={() => setSelectedFile(file)}
+                          className="text-primary hover:text-primary/80 underline font-bold"
+                        >
+                          {props.children}
+                        </button>
+                      )
+                    }
+                    return <a {...props} />
+                  },
+                }}
+              >
+                {result}
+              </ReactMarkdown>
+            </div>
+          </>
         )}
 
         {selectedFile && (
