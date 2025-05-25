@@ -1,6 +1,6 @@
 'use client'
 
-import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '@/lib/internal_api'
+import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '../../lib/internal_api'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { FileUpload } from './components/FileUpload'
