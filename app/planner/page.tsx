@@ -125,7 +125,9 @@ export default function PlannerPage() {
           />
           <div className="flex flex-col space-y-4">
             <h3 className="block text-lg font-bold text-foreground">
-              Como você quer seu plano de aula?
+              {isUpdatingPlan
+                ? 'Como você quer atualizar seu plano de aula?'
+                : 'Como você quer seu plano de aula?'}
             </h3>
             <textarea
               value={input}
