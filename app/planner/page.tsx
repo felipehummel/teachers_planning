@@ -181,7 +181,14 @@ export default function PlannerPage() {
 
     const weekDaysCount = selectedDays.filter(day => day).length
 
-    fetchStreamedPlan(uploadedFiles, userMessage, weekDaysCount, weeks, onComplete, onUpdate)
+    const createPlanInput = {
+      uploadedFiles,
+      userMessage,
+      weekDaysCount,
+      weeks,
+    }
+
+    fetchStreamedPlan(createPlanInput, onComplete, onUpdate)
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -322,7 +329,7 @@ export default function PlannerPage() {
                 ? 'Processando arquivos...'
                 : isLoading
                 ? 'Gerando...'
-                : 'Gerar Plano'}
+                : 'Criar Plano'}
             </button>
           </div>
         </form>

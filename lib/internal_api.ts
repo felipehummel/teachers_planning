@@ -5,11 +5,15 @@ export type UploadedFile = {
   hasError: boolean
 }
 
+export type CreatePlanInput = {
+  uploadedFiles: UploadedFile[]
+  userMessage: string
+  weekDaysCount: number
+  weeks: number
+}
+
 export async function fetchStreamedPlan(
-  uploadedFiles: UploadedFile[],
-  userMessage: string,
-  weekDaysCount: number,
-  weeks: number,
+  { uploadedFiles, userMessage, weekDaysCount, weeks }: CreatePlanInput,
   onComplete: () => void,
   onUpdate: (resultUntilNow: string) => void
 ) {
