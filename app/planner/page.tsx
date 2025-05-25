@@ -188,7 +188,7 @@ export default function PlannerPage() {
                           onClick={() => setSelectedFile(file)}
                           className="text-primary hover:text-primary/80 underline font-bold"
                         >
-                          {props.children}
+                          {childrenText}
                         </button>
                       )
                     }

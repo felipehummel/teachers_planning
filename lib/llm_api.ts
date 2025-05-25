@@ -29,7 +29,8 @@ The number of lessons/sessions MUST ALIGN WITH THIS DIRECTIVE.
 These are the files that the teacher uploaded. Use them to help you plan the lessons.
 For each lesson plan, you can use none of the files or multiple files.
 USE ONLY THE FILES THAT ARE MENTIONED IN THE REQUEST.
-When you cite a file, put a link to it in the format [exact_file_name](file://exact_file_name). In the link PUT ONLY THE FILE NAME, DO NOT PUT ANY OTHER COMMENT
+When you cite a file put a link with the file name as the link's text. For example, if the filename is "Apostila 1 - unidade 2.pdf", the link should be "[Apostila 1 - unidade 2.pdf](file://Apostila 1 - unidade 2.pdf)"
+If you want to put a page/slide number along the file link put it OUTSIDE the link. For example, if the filename is "Apostila 1 - unidade 2.pdf" and the page number is 10, the link should be "[Apostila 1 - unidade 2.pdf](file://Apostila 1 - unidade 2.pdf) Pag. 10"
 If the teacher doesn't provide a request, use the files to plan the lessons:
 ${files.map(file => `- ${file.name}: ${file.summary}`).join('\n')}
 
@@ -52,6 +53,7 @@ Then, divide the file content into sub-topics.
 
 For slides, you can use the slide number to identify the content of the slide. List a group of slides and summarizes what they talk about
 For documents, do the same thing by grouping similar parts of the content in sub-topics of the document.
+Despite being slides, never call things "slides" always call these sections/parts as "pages"!
 
 Output ONLY the summary, no extra text before or after.
 

@@ -18,6 +18,10 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+To run tests:
+
+`npm test`
+
 ## Notes on implementation
 
 ### LLM API interaction
@@ -31,9 +35,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Material upload, schedule and planning
 
-- As OpenAI doesn't easily accept all expected file formats, I decided to manually parse the pdf, docx and pptx files. Libraries for that were easily found.
+- As OpenAI doesn't accept all expected file formats, I decided to manually parse the pdf, docx and pptx files. Libraries for that were easily found. The drawback is that there's no OCR.
 - All file parsing is isolated in the `file_parsing` folder with a file for each file type
 - As soon as the file is uploaded we send the document to OpenAI for summarization and send the summarized content back to the frontend. That way we never need to store file information in a database.
 - I decided to put a little :eye: icon in the uploaded file so the user can see the summarized content of the file. If I were to implement the file preview it would also be there.
 - The schedule is chosen by the teacher through two components: a weeks slider (from 1 to 24 weeks) and a list of week days to choose from. I'm not entirely sure on the slider UI, but it felt better than a simple number textbox or a combobox with a huge list (1-24).
-- I handcrafted the prompts for the planning part by trial and error. Maybe with more guidance and feedback from teachers it could become much better.
+- I handcrafted the prompts for the planning part by trial and error. I had the privilege of having my wife as beta tester! :D She's a portuguese teacher and handed me a couple of files to test. She also test the whole flow on her own without me helping/nudging.
+
+## Bonus
+
+- There's a button to export to PDF
+- After the first plan generation the following ones will reuse the generated one as a base for the next instructions. Some text in the UI changes to indicate that.
