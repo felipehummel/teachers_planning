@@ -11,6 +11,12 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        turquoise: "#4EBFAB",
+        "turquoise-dark": "#3DA797",
+        yellow: "#FFB800",
+        lavender: "#F0F2FF",
       },
     },
   },

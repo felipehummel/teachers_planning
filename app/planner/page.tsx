@@ -56,28 +56,28 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Planejador de Aulas
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-foreground/70">
             Diga qual plano de aula você quer
           </p>
         </div>
 
         <div className="mb-8">
           <div className="flex items-center justify-center w-full">
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-primary/30 border-dashed rounded-lg cursor-pointer bg-white hover:bg-primary/5">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                <svg className="w-8 h-8 mb-4 text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
                 </svg>
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mb-2 text-sm text-foreground/70">
                   <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOCX, PPTX (múltiplos arquivos permitidos)</p>
+                <p className="text-xs text-foreground/60">PDF, DOCX, PPTX (múltiplos arquivos permitidos)</p>
               </div>
               <input type="file" className="hidden" accept=".pdf,.docx,.pptx" multiple onChange={handleFileUpload} />
             </label>
@@ -86,21 +86,21 @@ export default function ChatPage() {
           {uploadedFiles.length > 0 && (
             <div className="mt-4 space-y-2">
               {uploadedFiles.map((file) => (
-                <div key={file.name} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow">
+                <div key={file.name} className="flex items-center justify-between p-3 bg-white rounded-lg shadow">
                   <div className="flex items-center space-x-3">
-                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-xs">
+                    <span className="text-sm text-foreground/70 truncate max-w-xs">
                       {file.name}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
                     {file.isLoading ? (
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100" />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200" />
                       </div>
                     ) : file.hasError ? (
                       <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,7 +110,7 @@ export default function ChatPage() {
                       <>
                         <button
                           onClick={() => setSelectedFile(file)}
-                          className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none"
+                          className="p-1 text-primary hover:text-primary/80 focus:outline-none font-bold"
                           title="Ver resumo"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -120,7 +120,7 @@ export default function ChatPage() {
                         </button>
                         <button
                           onClick={() => removeFile(file.name)}
-                          className="p-1 text-red-500 hover:text-red-600 focus:outline-none"
+                          className="p-1 text-red-500 hover:text-red-600 focus:outline-none font-bold"
                           title="Remover arquivo"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,12 +149,12 @@ export default function ChatPage() {
               }}
               placeholder="Ex: Plano de aula sobre fotossíntese para 6º ano..."
               rows={2}
-              className="w-full p-4 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full p-4 rounded-lg border border-primary/30 bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors duration-200"
+              className="px-6 py-3 bg-turquoise text-white rounded-lg hover:bg-turquoise-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-colors duration-200 font-bold"
             >
               {isLoading ? 'Gerando...' : 'Gerar Plano'}
             </button>
@@ -164,15 +164,15 @@ export default function ChatPage() {
         {isLoading && (
           <div className="flex justify-center mb-8">
             <div className="flex space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" />
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce delay-100" />
-              <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce delay-200" />
+              <div className="w-3 h-3 bg-primary rounded-full animate-bounce" />
+              <div className="w-3 h-3 bg-primary rounded-full animate-bounce delay-100" />
+              <div className="w-3 h-3 bg-primary rounded-full animate-bounce delay-200" />
             </div>
           </div>
         )}
 
         {result && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg prose dark:prose-invert max-w-none">
+          <div className="bg-white rounded-lg p-6 shadow-lg prose max-w-none">
             <ReactMarkdown
               components={{
                 a: ({ node, ...props }) => {
@@ -183,7 +183,7 @@ export default function ChatPage() {
                     return (
                       <button
                         onClick={() => setSelectedFile(file)}
-                        className="text-blue-500 hover:text-blue-600 underline"
+                        className="text-primary hover:text-primary/80 underline font-bold"
                       >
                         {props.children}
                       </button>
@@ -199,22 +199,22 @@ export default function ChatPage() {
         )}
 
         {selectedFile && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <div className="fixed inset-0 bg-foreground/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-[0_0_30px_10px_rgba(0,0,0,0.1)] border border-primary/10">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-semibold text-foreground">
                   Resumo: {selectedFile.name}
                 </h2>
                 <button
                   onClick={() => setSelectedFile(null)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="text-foreground/50 hover:text-foreground/70 p-2 hover:bg-primary/5 rounded-full transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
-              <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+              <div className="text-foreground/80 whitespace-pre-wrap">
                 {selectedFile.summary}
               </div>
             </div>

@@ -1,0 +1,17 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Papel com sombra sutil -->
+  <path d="M6 8C6 6.89543 6.89543 6 8 6H20L26 12V24C26 25.1046 25.1046 26 24 26H8C6.89543 26 6 25.1046 6 24V8Z" fill="white"/>
+  <path d="M20 6L26 12H21C20.4477 12 20 11.5523 20 11V6Z" fill="#F0F2FF"/>
+
+  <!-- Lápis -->
+  <path d="M14 20L24 10L22 8L12 18L11 21L14 20Z" fill="#4EBFAB"/>
+  <path d="M24 10L22 8L23.5 6.5C24.3284 5.67157 25.6716 5.67157 26.5 6.5C27.3284 7.32843 27.3284 8.67157 26.5 9.5L25 11L24 10Z" fill="#FFB800"/>
+
+  <!-- Linhas de texto -->
+  <path d="M9 14H12" stroke="#4EBFAB" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M9 17H11" stroke="#4EBFAB" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M9 20H10" stroke="#4EBFAB" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Borda do papel -->
+  <path d="M8 6H20L26 12V24C26 25.1046 25.1046 26 24 26H8C6.89543 26 6 25.1046 6 24V8C6 6.89543 6.89543 6 8 6Z" stroke="#4EBFAB" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
