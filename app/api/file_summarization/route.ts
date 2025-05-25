@@ -1,5 +1,6 @@
 import { extractTextFromDOCXFile } from "@/lib/file_parsing/docx";
 import { extractTextFromPDFFile } from "@/lib/file_parsing/pdf";
+import { extractTextFromPPTXFile } from "@/lib/file_parsing/pptx";
 import { summarizeLessonText } from "@/lib/llm_api";
 
 function isPDF(file: File) {
@@ -8,6 +9,10 @@ function isPDF(file: File) {
 
 function isDOCX(file: File) {
   return file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+}
+
+function isPPTX(file: File) {
+  return file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 }
 
 export async function POST(req: Request) {
@@ -24,6 +29,8 @@ export async function POST(req: Request) {
       result = await extractTextFromPDFFile(file);
     } else if (isDOCX(file)) {
       result = await extractTextFromDOCXFile(file);
+    } else if (isPPTX(file)) {
+      result = await extractTextFromPPTXFile(file);
     } else {
       return new Response('Tipo de arquivo não suportado', { status: 400 });
     }

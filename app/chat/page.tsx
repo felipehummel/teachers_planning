@@ -77,9 +77,9 @@ export default function ChatPage() {
                 <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX (múltiplos arquivos permitidos)</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF, DOCX, PPTX (múltiplos arquivos permitidos)</p>
               </div>
-              <input type="file" className="hidden" accept=".pdf,.doc,.docx" multiple onChange={handleFileUpload} />
+              <input type="file" className="hidden" accept=".pdf,.docx,.pptx" multiple onChange={handleFileUpload} />
             </label>
           </div>
 
