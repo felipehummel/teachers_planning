@@ -225,6 +225,9 @@ export default function PlannerPage() {
   }
 
   const isUploadingFiles = uploadedFiles.some(file => file.isLoading)
+  const months = weeks > 4 ? Math.floor(weeks / 4) : undefined
+  const monthsString = months && months > 1 ? `${months} meses` : `${months} mês`
+  const weeksString = weeks > 1 ? `${weeks} semanas` : `${weeks} semana`
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -254,13 +257,13 @@ export default function PlannerPage() {
             </h3>
             <div className="bg-gray-50 p-4 rounded-lg border border-primary/30">
               <label className="block text-sm font-medium text-foreground mb-2">
-                <strong>Duração:</strong>{' '}
-                <span className="text-foreground/80">{weeks} semana(s)</span>
+                <strong>Duração:</strong> <span className="text-foreground/80">{weeksString}</span>
+                {months && <span className="text-foreground/80 ml-1">({monthsString})</span>}
               </label>
               <input
                 type="range"
                 min="1"
-                max="28"
+                max="24"
                 value={weeks}
                 onChange={e => setWeeks(parseInt(e.target.value))}
                 className="w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:shadow-md"
