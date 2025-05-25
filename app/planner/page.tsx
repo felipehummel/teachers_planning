@@ -224,6 +224,8 @@ export default function PlannerPage() {
     setUploadedFiles(prev => prev.filter(file => file.name !== fileName))
   }
 
+  const isUploadingFiles = uploadedFiles.some(file => file.isLoading)
+
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
@@ -310,10 +312,14 @@ export default function PlannerPage() {
             />
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || isUploadingFiles}
               className="px-6 py-3 bg-turquoise text-white rounded-lg hover:bg-turquoise-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 transition-colors duration-200 font-bold"
             >
-              {isLoading ? 'Gerando...' : 'Gerar Plano'}
+              {isUploadingFiles
+                ? 'Processando arquivos...'
+                : isLoading
+                ? 'Gerando...'
+                : 'Gerar Plano'}
             </button>
           </div>
         </form>
@@ -376,7 +382,9 @@ export default function PlannerPage() {
                   </svg>
                 </button>
               </div>
-              <div className="text-foreground/80 whitespace-pre-wrap">{selectedFile.summary}</div>
+              <div className="bg-white rounded-lg p-6 shadow-lg prose max-w-none">
+                <ReactMarkdown>{selectedFile.summary}</ReactMarkdown>
+              </div>
             </div>
           </div>
         )}
