@@ -1,19 +1,8 @@
 import { extractTextFromDOCXFile } from '@/lib/file_parsing/docx'
+import { extractTextFromFile } from '@/lib/file_parsing/file_extracter'
 import { extractTextFromPDFFile } from '@/lib/file_parsing/pdf'
 import { extractTextFromPPTXFile } from '@/lib/file_parsing/pptx'
 import { summarizeLessonText } from '@/lib/llm_api'
-
-function isPDF(file: File) {
-  return file.type === 'application/pdf'
-}
-
-function isDOCX(file: File) {
-  return file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-}
-
-function isPPTX(file: File) {
-  return file.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-}
 
 export async function POST(req: Request) {
   try {
@@ -24,14 +13,8 @@ export async function POST(req: Request) {
       return new Response('Arquivo não encontrado', { status: 400 })
     }
 
-    let result: { text: string }
-    if (isPDF(file)) {
-      result = await extractTextFromPDFFile(file)
-    } else if (isDOCX(file)) {
-      result = await extractTextFromDOCXFile(file)
-    } else if (isPPTX(file)) {
-      result = await extractTextFromPPTXFile(file)
-    } else {
+    const result = await extractTextFromFile(file)
+    if (!result) {
       return new Response('Tipo de arquivo não suportado', { status: 400 })
     }
 
