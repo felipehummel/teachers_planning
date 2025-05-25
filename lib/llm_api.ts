@@ -1,11 +1,19 @@
 import { createOpenAI } from '@ai-sdk/openai'
 import { generateText, streamText } from 'ai'
 
-function lessonPlanningSystemPrompt(request: string, files: { name: string; summary: string }[]) {
+function lessonPlanningSystemPrompt(
+  request: string,
+  weekDaysCount: number,
+  weeksCount: number,
+  files: { name: string; summary: string }[]
+) {
   return `
 You are a teacher's assistant that will help they plan sessions for the classes they'll have for a given subject
 The plan should be written in the given language and using markdown
 Output ONLY the plan, no extra text before or after.
+
+The teacher said the plan MUST last for ${weeksCount} weeks, with ${weekDaysCount} days per week.
+The number of lessons/sessions MUST ALIGN WITH THIS DIRECTIVE.
 
 These are the files that the teacher uploaded. Use them to help you plan the lessons.
 For each lesson plan, you can use none of the files or multiple files.
@@ -36,10 +44,15 @@ const openai = createOpenAI({
   compatibility: 'strict',
 })
 
-export function streamTeacherPlanning(request: string, files: { name: string; summary: string }[]) {
+export function streamTeacherPlanning(
+  request: string,
+  files: { name: string; summary: string }[],
+  weekDaysCount: number,
+  weeksCount: number
+) {
   const response = streamText({
     model: openai('gpt-4.1-mini'),
-    prompt: lessonPlanningSystemPrompt(request, files),
+    prompt: lessonPlanningSystemPrompt(request, weekDaysCount, weeksCount, files),
   })
   return response.textStream
 }
