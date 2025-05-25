@@ -1,6 +1,6 @@
 'use client';
 
-import { fetchStreamedPlan } from '@/lib/internal_api';
+import { fetchStreamedPlan, summarizeFile, type UploadedFile } from '@/lib/internal_api';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -8,6 +8,8 @@ export default function ChatPage() {
   const [input, setInput] = useState('');
   const [result, setResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,35 @@ export default function ChatPage() {
     const onComplete = () => setIsLoading(false);
     const onUpdate = (resultUntilNow: string) => setResult(resultUntilNow);
 
-    fetchStreamedPlan(userMessage, onComplete, onUpdate);
+    fetchStreamedPlan(uploadedFiles, userMessage, onComplete, onUpdate);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const toUploadFiles = Array.from(files)
+
+    const newFiles = toUploadFiles.map(file => ({
+      name: file.name,
+      isLoading: true,
+      hasError: false
+    }));
+
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+
+    await Promise.all(toUploadFiles.map(async (file) => {
+      const { summary, hasError } = await summarizeFile(file);
+      if (hasError) {
+        setUploadedFiles(prev => prev.map(f => f.name === file.name ? { ...f, summary: 'Erro ao processar o arquivo', isLoading: false, hasError: true } : f));
+      } else {
+        setUploadedFiles(prev => prev.map(f => f.name === file.name ? { ...f, summary, isLoading: false, hasError: false } : f));
+      }
+    }));
+  };
+
+  const removeFile = (fileName: string) => {
+    setUploadedFiles(prev => prev.filter(file => file.name !== fileName));
   };
 
   return (
@@ -37,11 +67,86 @@ export default function ChatPage() {
           </p>
         </div>
 
+        <div className="mb-8">
+          <div className="flex items-center justify-center w-full">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                </svg>
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PDF (múltiplos arquivos permitidos)</p>
+              </div>
+              <input type="file" className="hidden" accept=".pdf" multiple onChange={handleFileUpload} />
+            </label>
+          </div>
+
+          {uploadedFiles.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {uploadedFiles.map((file) => (
+                <div key={file.name} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow">
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-xs">
+                      {file.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {file.isLoading ? (
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
+                      </div>
+                    ) : file.hasError ? (
+                      <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => setSelectedFile(file)}
+                          className="p-1 text-blue-500 hover:text-blue-600 focus:outline-none"
+                          title="Ver resumo"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => removeFile(file.name)}
+                          className="p-1 text-red-500 hover:text-red-600 focus:outline-none"
+                          title="Remover arquivo"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit} className="mb-8">
           <div className="flex flex-col space-y-4">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSubmit(e as any);
+                }
+              }}
               placeholder="Ex: Plano de aula sobre fotossíntese para 6º ano..."
               rows={2}
               className="w-full p-4 rounded-lg border dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -68,12 +173,54 @@ export default function ChatPage() {
 
         {result && (
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg prose dark:prose-invert max-w-none">
-            <ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                a: ({ node, ...props }) => {
+                  const childrenText = props.children?.toString() || '';
+                  const file = uploadedFiles.find(f => f.name === childrenText);
+
+                  if (file) {
+                    return (
+                      <button
+                        onClick={() => setSelectedFile(file)}
+                        className="text-blue-500 hover:text-blue-600 underline"
+                      >
+                        {props.children}
+                      </button>
+                    );
+                  }
+                  return <a {...props} />;
+                }
+              }}
+            >
               {result}
             </ReactMarkdown>
+          </div>
+        )}
+
+        {selectedFile && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Resumo: {selectedFile.name}
+                </h2>
+                <button
+                  onClick={() => setSelectedFile(null)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                {selectedFile.summary}
+              </div>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
-} 
+}

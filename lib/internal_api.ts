@@ -1,9 +1,23 @@
-export async function fetchStreamedPlan(userMessage: string, onComplete: () => void, onUpdate: (resultUntilNow: string) => void) {
+export type UploadedFile = {
+  name: string;
+  summary?: string;
+  isLoading: boolean;
+  hasError: boolean;
+}
+
+export async function fetchStreamedPlan(uploadedFiles: UploadedFile[], userMessage: string, onComplete: () => void, onUpdate: (resultUntilNow: string) => void) {
   try {
+    const files = uploadedFiles
+      .filter(file => file.summary && !file.hasError)
+      .map(file => ({
+      name: file.name,
+      summary: file.summary
+    }));
+
     const response = await fetch('/api/planner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMessage }),
+      body: JSON.stringify({ message: userMessage, files }),
     });
 
     if (!response.ok) throw new Error(`API response error: ${response.statusText}`);
@@ -24,8 +38,38 @@ export async function fetchStreamedPlan(userMessage: string, onComplete: () => v
     }
   } catch (error) {
     console.error('Error sending message:', error);
+    // hardcoding error message for now. Should be a proper boolean error variable
     onUpdate('Sorry, there was an error processing your request.');
   } finally {
     onComplete();
+  }
+}
+
+export async function summarizeFile(file: File): Promise<{ summary: string, hasError: boolean }> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const response = await fetch('/api/file_summarization', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error processing file: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      summary: data.fileSummary,
+      hasError: false
+    };
+  } catch (error) {
+    console.error('Erro:', error);
+    return {
+      summary: '',
+      hasError: true
+    };
   }
 }
