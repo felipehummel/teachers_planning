@@ -5,8 +5,17 @@ function lessonPlanningSystemPrompt(
   request: string,
   weekDaysCount: number,
   weeksCount: number,
-  files: { name: string; summary: string }[]
+  files: { name: string; summary: string }[],
+  lastGeneratedPlan: string
 ) {
+  const lastGeneratedPlanPrompt =
+    lastGeneratedPlan !== ''
+      ? `
+  This is the last generated plan. Consider it as a base for the new plan and change it according to the user request:
+  ${lastGeneratedPlan}
+  `
+      : ''
+
   return `
 You are a teacher's assistant that will help they plan sessions for the classes they'll have for a given subject
 The plan should be written in the given language and using markdown
@@ -23,6 +32,8 @@ USE ONLY THE FILES THAT ARE MENTIONED IN THE REQUEST.
 When you cite a file, put a link to it in the format [exact_file_name](file://exact_file_name). In the link PUT ONLY THE FILE NAME, DO NOT PUT ANY OTHER COMMENT
 If the teacher doesn't provide a request, use the files to plan the lessons:
 ${files.map(file => `- ${file.name}: ${file.summary}`).join('\n')}
+
+${lastGeneratedPlanPrompt}
 
 This is the request from the teacher:
 ${request}
@@ -58,11 +69,18 @@ export function streamTeacherPlanning(
   request: string,
   files: { name: string; summary: string }[],
   weekDaysCount: number,
-  weeksCount: number
+  weeksCount: number,
+  lastGeneratedPlan: string
 ) {
   const response = streamText({
     model: openai('gpt-4.1-mini'),
-    prompt: lessonPlanningSystemPrompt(request, weekDaysCount, weeksCount, files),
+    prompt: lessonPlanningSystemPrompt(
+      request,
+      weekDaysCount,
+      weeksCount,
+      files,
+      lastGeneratedPlan
+    ),
   })
   return response.textStream
 }

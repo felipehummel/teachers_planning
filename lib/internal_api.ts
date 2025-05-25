@@ -10,10 +10,11 @@ export type CreatePlanInput = {
   userMessage: string
   weekDaysCount: number
   weeks: number
+  lastGeneratedPlan: string
 }
 
 export async function fetchStreamedPlan(
-  { uploadedFiles, userMessage, weekDaysCount, weeks }: CreatePlanInput,
+  { uploadedFiles, userMessage, weekDaysCount, weeks, lastGeneratedPlan }: CreatePlanInput,
   onComplete: () => void,
   onUpdate: (resultUntilNow: string) => void
 ) {
@@ -28,7 +29,13 @@ export async function fetchStreamedPlan(
     const response = await fetch('/api/planner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMessage, files, weekDaysCount, weeksCount: weeks }),
+      body: JSON.stringify({
+        message: userMessage,
+        files,
+        weekDaysCount,
+        weeksCount: weeks,
+        lastGeneratedPlan,
+      }),
     })
 
     if (!response.ok) throw new Error(`API response error: ${response.statusText}`)

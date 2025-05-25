@@ -46,6 +46,7 @@ export default function PlannerPage() {
       userMessage,
       weekDaysCount,
       weeks,
+      lastGeneratedPlan: result,
     }
 
     fetchStreamedPlan(createPlanInput, onComplete, onUpdate)
@@ -92,6 +93,7 @@ export default function PlannerPage() {
   }
 
   const isUploadingFiles = uploadedFiles.some(file => file.isLoading)
+  const isUpdatingPlan = result !== ''
 
   return (
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -134,7 +136,11 @@ export default function PlannerPage() {
                   handleSubmit(e as any)
                 }
               }}
-              placeholder="Ex: Plano de aula sobre fotossíntese para 6º ano..."
+              placeholder={
+                isUpdatingPlan
+                  ? 'Ex: Mova as aulas sobre fotossíntese para o final do plano...'
+                  : 'Ex: Plano de aula sobre fotossíntese para 6º ano...'
+              }
               rows={2}
               className="w-full p-4 rounded-lg border border-primary/30 bg-white text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
             />
@@ -147,6 +153,8 @@ export default function PlannerPage() {
                 ? 'Processando arquivos...'
                 : isLoading
                 ? 'Gerando...'
+                : isUpdatingPlan
+                ? 'Atualizar Plano'
                 : 'Criar Plano'}
             </button>
           </div>
